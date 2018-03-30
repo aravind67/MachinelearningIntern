@@ -40,7 +40,7 @@ from sklearn.preprocessing import StandardScaler
 std_scaler = StandardScaler()
 X = std_scaler.fit_transform(Xtrain)
 from sklearn.model_selection import train_test_split
-X_train,X_test,Y_train,Y_test=train_test_split(X,Ytrain,test_size=0.33,random_state=42) #Spliting train and test set
+X_train,X_test,Y_train,Y_test=train_test_split(X,Ytrain,test_size=0.33,random_state=42)  #splitting train and test set 
 from sklearn.svm import SVC, LinearSVC
 svc = SVC()
 svc.fit(X_train, Y_train)
