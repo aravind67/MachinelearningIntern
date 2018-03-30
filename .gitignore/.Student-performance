@@ -1,0 +1,48 @@
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load in 
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Input data files are available in the "../input/" directory.
+# For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
+
+import os
+print(os.listdir("../input"))
+stud=pd.read_csv('../input/student-performance.csv')
+stud.head()
+stud.info()
+stud.describe()
+stud.plot(kind="scatter",x="Total Marks",y="Visited resources")
+stud.plot(kind = "hist",y = "Visited resources",bins = 50,range= (0,250),normed = True)
+stud.loc[(stud['Total Marks'] > 0) & (stud['Total Marks'] <= 69), 'Total Marks'] = 0
+stud.loc[(stud['Total Marks'] >= 70) & (stud['Total Marks'] <= 89), 'Total Marks']   = 1
+stud.loc[ stud['Total Marks'] >=90, 'Total Marks'] =2
+stud['Total Marks']=stud['Total Marks'].astype(int)
+stud['StudentAbsenceDays']=stud['StudentAbsenceDays'].map({'Under-7':0,'Above-7':1}).astype(int)
+stud['ParentschoolSatisfaction']=stud['ParentschoolSatisfaction'].map({'Bad':0,'Good':1}).astype(int)   
+stud['Parent Answering Survey']=stud['Parent Answering Survey'].map({'No':0,'Yes':1}).astype(int)   
+stud['Section ID']=stud['Section ID'].map({'A':0,'B':1,'C':2}).astype(int)   
+stud['mm']=stud['mm'].map({'Male':0,'Female':1}).astype(float)
+stud.head()
+print (stud[["mm", "Total Marks"]].groupby(["mm"], as_index=False).mean())
+stud['Section ID'].value_counts()
+stud.head()
+studfinal=stud.drop(['Parent responsible for student','mm','Topic','Grade Levels','Educational Stages ','Semester','Nationality'],axis=1)
+studfinal.head() 
+Xtrain = studfinal.drop("Total Marks", axis=1)
+Ytrain = studfinal["Total Marks"] 
+# studfinal is the final set
+from sklearn.preprocessing import StandardScaler
+std_scaler = StandardScaler()
+X = std_scaler.fit_transform(Xtrain)
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(X,Ytrain,test_size=0.33,random_state=42) #Spliting train and test set
+from sklearn.svm import SVC, LinearSVC
+svc = SVC()
+svc.fit(X_train, Y_train)
+print(svc.score(X_test,Y_test)) #implementing model on test set
+
